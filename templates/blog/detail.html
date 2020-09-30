@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Detail | {{ post.title }} {% endblock title %}
+
+{% block content %}
+
+<br>
+<br>
+<div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-12">
+        <h2>{{ post.title }}</h2>
+        <small class="text-muted">{{ post.created|date:"D m, Y" }}</small>
+        <br>
+        <br>
+        <p>{{ post.body }}</p>
+        
+        <p><a class="btn btn-secondary" href="#" role="button">Edit Post »</a></p>
+      </div>
+    </div>
+
+    <hr>
+
+  </div>
+
+{% endblock content %}
