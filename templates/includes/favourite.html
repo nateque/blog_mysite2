@@ -1,0 +1,14 @@
+<br>
+<div class="favourite">
+    
+    {% if is_favourite %}
+    <a href="{% url 'favourite_post' post.id %}" >
+        <i class="fas fa-heart fa-lg"></i>
+    </a>
+    {% else %}
+    <a href="{% url 'favourite_post' post.id %}" >
+        <i class="far fa-heart fa-lg"></i>
+    </a>
+    {% endif %}
+        
+</div>

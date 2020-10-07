@@ -30,6 +30,7 @@ class Post(models.Model):
     updated         =   models.DateTimeField(auto_now=True)
     status          =   models.CharField(max_length=20, choices=CHOICES, default='draft')
     restrict_comment=   models.BooleanField(default=False)
+    favourite       =   models.ManyToManyField(User, blank=True, related_name='favourites' )
 
     class Meta:
         ordering = ['-created'] # latest Order_by posts

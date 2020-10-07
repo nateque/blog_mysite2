@@ -20,7 +20,7 @@
             </form>
         </ul>
 
-        <ul class="navbar-nav">
+        <ul class="navbar-nav mr-5">
             {% if user.is_authenticated %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -30,6 +30,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" {% if user.is_staff %} href="/admin" {% else %} href="{% url 'profile' %}"
                         {% endif %}>Profile</a>
+                    <a class="dropdown-item" href="{% url 'fav_posts' %}">Favourite Posts</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                 </div>
             </li>

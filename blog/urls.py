@@ -13,4 +13,6 @@ urlpatterns = [
     path('register/', views.user_registration, name='register'),
     path('profile/', views.profileEdit, name='profile'),
     path('like/', views.like_post, name='like_post'),
+    path('favourite_post/<int:id>', views.favourite_post, name='favourite_post'),
+    path('fav_posts/', views.fav_post_list, name='fav_posts'),
 ]

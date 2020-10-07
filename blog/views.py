@@ -41,8 +41,12 @@ def detailPost(request, pk, slug):
     post = get_object_or_404(Post, id=pk, slug=slug)
     comments = Comment.objects.filter(post=post, reply=None).order_by('-id')
     is_liked = False
+    is_favourite = False
     if post.likes.filter(id=request.user.id).exists():
         is_liked = True
+
+    if post.favourite.filter(id=request.user.id).exists():
+        is_favourite = True
     
     if not request.user.is_authenticated:
         return Http404('Please login to comment on posts.')
@@ -65,6 +69,7 @@ def detailPost(request, pk, slug):
     context = {
         'post': post,
         'is_liked': is_liked,
+        'is_favourite': is_favourite,
         'total_likes': post.total_likes(),
         'comments': comments,
         'comment_form': comment_form,
@@ -75,14 +80,30 @@ def detailPost(request, pk, slug):
 
 def like_post(request):
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
-    is_liked = False
     if post.likes.filter(id=request.user.id).exists():
         post.likes.remove(request.user)
-        is_liked = False
     else:
         post.likes.add(request.user)
-        is_liked = True
     return redirect(post.get_absolute_url())
+
+
+def favourite_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    if post.favourite.filter(id=request.user.id).exists():
+        post.favourite.remove(request.user)
+    else:
+        post.favourite.add(request.user)
+    return redirect(post.get_absolute_url())
+
+
+def fav_post_list(request):
+    if request.user.is_authenticated:
+        fav_posts = Post.objects.all().filter(favourite=request.user)
+    context = {
+        'fav_posts': fav_posts,
+    }
+    template_name = 'blog/fav_posts.html'
+    return render(request, template_name, context)
 
 
 @login_required(login_url= 'login')
