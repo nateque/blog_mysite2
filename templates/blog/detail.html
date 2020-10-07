@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %} Detail | {{ post.title }} {% endblock title %}
 
 {% block content %}
+
+<!-- message includes -->
+{% include 'includes/message.html' %}
 
 <br>
 <br>
@@ -15,12 +19,109 @@
       <small class="text-muted">{{ post.author|capfirst }} - {{ post.created|date:"D m, Y" }}</small>
       <br>
       <br>
-      <p>{{ post.body }}</p>  
-      <a class="btn btn-secondary" href="#" role="button">Edit Post »</a>
+      <p>{{ post.body }}</p>
+
+      <form action="{% url 'like_post' %}" method="POST">
+        {% csrf_token %}
+
+        {{ total_likes }} Like{{ total_likes|pluralize }}
+
+        {% if request.user.is_authenticated %}
+        {% if is_liked %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn-sm btn-danger">Dislike</button>
+        {% else %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn-sm btn-primary">Like</button>
+        {% endif %}
+        {% endif %}
+
+      </form>
+
+      <br>
+
+      {% if post.author == request.user %}
+      <a class="btn btn-secondary" href="{% url 'edit_post' post.id %}" role="button">Edit Post »</a>
+      <a class="btn btn-danger" href="{% url 'delete_post' post.id %}" id="delete" role="button">Delete Post</a>
+      {% endif %}
+
     </div>
   </div>
-
+  <br>
   <hr>
+
+
+  {% if not post.restrict_comment %}
+  <div class="container comment">
+    <form method="POST">
+      {% csrf_token %}
+      {{ comment_form|crispy }}
+      <button type="submit" class="btn btn-sm btn-primary">Comment</button>
+    </form>
+
+    <hr>
+
+    {% if comments %}
+    <h4>{{ comments.count }} Comment{{ comments|pluralize }}</h4>
+    {% for comment in comments %}
+
+    <blockquote class="blockquote">
+      <p class="mb-0"><small>{{ comment.content }}</small></p>
+      <footer class="blockquote-footer"><small>by <cite title="Source Title">{{ comment.user|capfirst }}</small></cite>
+        {% if post.author == request.user or comment.user == request.user %}
+        <a href="{% url 'delete_comment' comment.id %}" id="delete" role="button">
+
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z" />
+          </svg>
+
+        </a>
+        {% endif %}
+
+        {% if comment.user == request.user %}
+        <a href="#" id='edit' role="button">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-fill" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+          </svg>
+        </a>
+        {% endif %}
+
+        <!-- <button type="submit" name="button" class="reply-btn btn btn-sm btn-outline-dark ml-2">Reply</button> -->
+      </footer>
+
+      {% if comment.replies.all %}
+      {% for reply in comment.replies.all %}
+      <div class="replied-comments container mt-2">
+        <p class="mb-0"><small>{{ reply.content }}</small></p>
+        <footer class="blockquote-footer"><small>by <cite title="Source Title">{{ reply.user|capfirst }}</small></cite>
+        </footer>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="reply_id" value="{{ comment.id }}">
+        {{ comment_form|crispy }}
+        <button type="submit" class="btn btn-sm btn-primary">Comment</button>
+      </form>
+
+    </blockquote>
+
+    {% endfor %}
+
+    {% endif %}
+
+  </div>
+  {% else %}
+  <h6>
+    Comments Restricted by Post Author.
+  </h6>
+  {% endif %}
+
+
 
 </div>
 

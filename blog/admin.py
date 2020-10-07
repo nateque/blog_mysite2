@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Profile
+from .models import Post, Profile, Image_post, Comment
 
 # Register your models here.
 class PostAdmin(admin.ModelAdmin):
@@ -18,5 +18,9 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields       =   ('id', 'user', )
     list_filter         =   ('dob', )
 
+
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Post, PostAdmin)
+admin.site.register(Image_post)
+admin.site.register(Comment)

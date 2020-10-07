@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %} Create Post {% endblock title %}
+{% block title %} Edit Post | {{ post.title }} {% endblock title %}
 
 {% block content %}
 
@@ -18,12 +18,8 @@
             </div>
         </div>
         {{ form.restrict_comment|as_crispy_field }}
-            <!-- {{ formset.management_form }}
-            {% for form in formset %}
-                {{ form|crispy }}
-            {% endfor %} -->
-        <button type="submit" class="btn btn-primary">Post</button>
-        <a href="{% url 'home' %}" class="btn btn-dark">Cancel</a>
+        <button type="submit" value="Update" class="btn btn-primary">Update</button>
+        <a href="{{ post.get_absolute_url }}" class="btn btn-dark">Cancel</a>
     </form>
 </div>
 <br>

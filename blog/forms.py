@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Profile
+from .models import Post, Profile, Image_post, Comment
 from django.contrib.auth.models import User
 
 class PostForm(forms.ModelForm):
@@ -9,6 +9,25 @@ class PostForm(forms.ModelForm):
             'title',
             'body',
             'status',
+            'restrict_comment',
+        )
+
+class ImageForm(forms.ModelForm):
+    image = forms.ImageField(label='image')
+    class Meta:
+        model = Image_post
+        fields = (
+            'image',
+        )
+
+class PostEditForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = (
+            'title',
+            'body',
+            'status',
+            'restrict_comment',
         )
 
 # class UserLoginForm(forms.Form):
@@ -54,3 +73,10 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         exclude = ('user', )
+
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(widget= forms.Textarea(attrs= {'rows': '2', }))
+
+    class Meta:
+        model = Comment
+        fields = ('content',)
